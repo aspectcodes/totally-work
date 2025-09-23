@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fishing Game</title>
+	<style>
+		body { font-family: Arial, sans-serif; background: #e0f7fa; margin: 0; padding: 0; }
+		.container { max-width: 400px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #0002; }
+		.hidden { display: none; }
+		button { padding: 8px 16px; margin-top: 8px; }
+		#admin-panel { background: #fce4ec; margin-top: 16px; padding: 16px; border-radius: 8px; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<!-- Login Form -->
+		<div id="login-section">
+			<h2>Login</h2>
+			<input type="text" id="username" placeholder="Username"><br>
+			<input type="password" id="password" placeholder="Password"><br>
+			<button onclick="login()">Login</button>
+			<div id="login-error" style="color:red;"></div>
+		</div>
+
+		<!-- Game Section -->
+		<div id="game-section" class="hidden">
+			<h2>Fishing Game</h2>
+			<div id="welcome"></div>
+			<button onclick="fish()">Go Fishing!</button>
+			<div id="catch-result"></div>
+			<div id="inventory"></div>
+			<button id="logout-btn" onclick="logout()">Logout</button>
+		</div>
+
+		<!-- Admin Panel -->
+		<div id="admin-panel" class="hidden">
+			<h3>Admin Panel</h3>
+			<div id="user-list"></div>
+		</div>
+	</div>
+	<script src="game.js"></script>
+</body>
+</html>
