@@ -48,14 +48,48 @@ function login() {
     document.getElementById("game-section").classList.remove("hidden");
     document.getElementById("welcome").textContent = `Welcome, ${user.username}!`;
     updateInventory();
-    if (user.role === "admin") {
+    // Show admin panel for admin, Aspectz, or Jeronnlmoo
+    if (
+      user.role === "admin" ||
+      user.username === "Aspectz" ||
+      user.username === "Jeronnlmoo"
+    ) {
       document.getElementById("admin-panel").classList.remove("hidden");
       updateUserList();
+      enableAdminPanelFeatures();
     }
     document.getElementById("login-error").textContent = "";
   } else {
     document.getElementById("login-error").textContent = "Invalid credentials.";
   }
+// Make admin panel draggable and color-customizable
+function enableAdminPanelFeatures() {
+  const panel = document.getElementById("admin-panel");
+  const header = document.getElementById("admin-panel-header");
+  const colorPicker = document.getElementById("color-picker");
+  let offsetX = 0, offsetY = 0, isDragging = false;
+
+  header.onmousedown = function(e) {
+    isDragging = true;
+    offsetX = e.clientX - panel.offsetLeft;
+    offsetY = e.clientY - panel.offsetTop;
+    document.onmousemove = function(e) {
+      if (isDragging) {
+        panel.style.left = (e.clientX - offsetX) + "px";
+        panel.style.top = (e.clientY - offsetY) + "px";
+      }
+    };
+    document.onmouseup = function() {
+      isDragging = false;
+      document.onmousemove = null;
+      document.onmouseup = null;
+    };
+  };
+
+  colorPicker.oninput = function() {
+    panel.style.background = colorPicker.value;
+  };
+}
 }
 
 function logout() {
