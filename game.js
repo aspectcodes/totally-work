@@ -1,8 +1,40 @@
 // Fishing Game Logic
 const users = [
   { username: "admin", password: "admin123", role: "admin", inventory: [] },
-  { username: "player", password: "fishy", role: "user", inventory: [] }
+  { username: "player", password: "fishy", role: "user", inventory: [] },
+  { username: "Aspectz", password: "Freedom1234@", role: "user", inventory: [] },
+  { username: "Jeronnlmoo", password: "123", role: "user", inventory: [] }
 ];
+function showRegister() {
+  document.getElementById("login-section").classList.add("hidden");
+  document.getElementById("register-section").classList.remove("hidden");
+  document.getElementById("register-error").textContent = "";
+}
+
+function hideRegister() {
+  document.getElementById("register-section").classList.add("hidden");
+  document.getElementById("login-section").classList.remove("hidden");
+  document.getElementById("register-error").textContent = "";
+}
+
+function register() {
+  const username = document.getElementById("reg-username").value.trim();
+  const password = document.getElementById("reg-password").value;
+  if (!username || !password) {
+    document.getElementById("register-error").textContent = "Please enter a username and password.";
+    return;
+  }
+  if (users.find(u => u.username === username)) {
+    document.getElementById("register-error").textContent = "Username already exists.";
+    return;
+  }
+  users.push({ username, password, role: "user", inventory: [] });
+  document.getElementById("register-error").textContent = "Registered! You can now log in.";
+  setTimeout(() => {
+    hideRegister();
+    document.getElementById("username").value = username;
+  }, 1000);
+}
 let currentUser = null;
 
 function login() {
@@ -12,6 +44,7 @@ function login() {
   if (user) {
     currentUser = user;
     document.getElementById("login-section").classList.add("hidden");
+    document.getElementById("register-section").classList.add("hidden");
     document.getElementById("game-section").classList.remove("hidden");
     document.getElementById("welcome").textContent = `Welcome, ${user.username}!`;
     updateInventory();
@@ -28,10 +61,13 @@ function login() {
 function logout() {
   currentUser = null;
   document.getElementById("login-section").classList.remove("hidden");
+  document.getElementById("register-section").classList.add("hidden");
   document.getElementById("game-section").classList.add("hidden");
   document.getElementById("admin-panel").classList.add("hidden");
   document.getElementById("username").value = "";
   document.getElementById("password").value = "";
+  document.getElementById("reg-username").value = "";
+  document.getElementById("reg-password").value = "";
 }
 
 const fishTypes = [
@@ -46,14 +82,14 @@ function fish() {
   if (!currentUser) return;
   // Luck-based catch
   const roll = Math.random();
-  let catch;
-  if (roll < 0.5) catch = fishTypes[0]; // Common Carp
-  else if (roll < 0.7) catch = fishTypes[1]; // Bass
-  else if (roll < 0.85) catch = fishTypes[3]; // Catfish
-  else if (roll < 0.98) catch = fishTypes[2]; // Golden Trout
-  else catch = fishTypes[4]; // Legendary Koi
-  currentUser.inventory.push(catch);
-  document.getElementById("catch-result").textContent = `You caught a ${catch.rarity} fish: ${catch.name}!`;
+  let caughtFish;
+  if (roll < 0.5) caughtFish = fishTypes[0]; // Common Carp
+  else if (roll < 0.7) caughtFish = fishTypes[1]; // Bass
+  else if (roll < 0.85) caughtFish = fishTypes[3]; // Catfish
+  else if (roll < 0.98) caughtFish = fishTypes[2]; // Golden Trout
+  else caughtFish = fishTypes[4]; // Legendary Koi
+  currentUser.inventory.push(caughtFish);
+  document.getElementById("catch-result").textContent = `You caught a ${caughtFish.rarity} fish: ${caughtFish.name}!`;
   updateInventory();
   if (currentUser.role === "admin") updateUserList();
 }
