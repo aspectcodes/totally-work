@@ -5,31 +5,94 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Fishing Game</title>
 	<style>
-		body { font-family: Arial, sans-serif; background: #e0f7fa; margin: 0; padding: 0; }
-		.container { max-width: 400px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #0002; }
-		.hidden { display: none; }
-		button { padding: 8px 16px; margin-top: 8px; }
+		body {
+			font-family: 'Segoe UI', Arial, sans-serif;
+			background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+			margin: 0; padding: 0;
+		}
+		.container {
+			max-width: 420px;
+			margin: 40px auto;
+			background: rgba(255,255,255,0.95);
+			padding: 32px 28px;
+			border-radius: 16px;
+			box-shadow: 0 4px 32px #0002;
+		}
+		h2, h3 { color: #3b3b3b; }
+		.hidden { display: none !important; }
+		button {
+			padding: 10px 20px;
+			margin-top: 10px;
+			border-radius: 8px;
+			border: none;
+			background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+			color: #fff;
+			font-weight: bold;
+			box-shadow: 0 2px 8px #0001;
+			cursor: pointer;
+			transition: background 0.2s, transform 0.2s;
+		}
+		button:hover {
+			background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+			transform: scale(1.05);
+		}
+		input[type="text"], input[type="password"] {
+			padding: 8px;
+			margin: 6px 0;
+			border-radius: 6px;
+			border: 1px solid #bdbdbd;
+			width: 90%;
+			font-size: 1em;
+		}
+		#catch-animation {
+			position: fixed;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 2000;
+			font-size: 2em;
+			font-weight: bold;
+			color: #fff;
+			background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+			padding: 24px 48px;
+			border-radius: 24px;
+			box-shadow: 0 8px 32px #0006;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.7s;
+		}
 		#admin-panel {
 			background: #fce4ec;
 			margin-top: 16px;
 			padding: 16px;
-			border-radius: 8px;
+			border-radius: 12px;
 			position: absolute;
 			top: 60px;
 			left: 60px;
-			min-width: 320px;
-			min-height: 180px;
-			box-shadow: 0 4px 24px #0004;
+			min-width: 340px;
+			min-height: 200px;
+			box-shadow: 0 8px 32px #0004;
 			z-index: 1000;
 			cursor: move;
-			transition: background 0.3s;
+			transition: background 0.3s, opacity 0.5s;
+			opacity: 0;
+			pointer-events: none;
+		}
+		#admin-panel.visible {
+			opacity: 1;
+			pointer-events: auto;
+			animation: fadeIn 0.5s;
+		}
+		@keyframes fadeIn {
+			from { opacity: 0; }
+			to { opacity: 1; }
 		}
 		#admin-panel-header {
 			font-weight: bold;
 			cursor: move;
 			background: #f8bbd0;
 			padding: 8px;
-			border-radius: 6px 6px 0 0;
+			border-radius: 10px 10px 0 0;
 			margin: -16px -16px 8px -16px;
 			display: flex;
 			justify-content: space-between;
@@ -38,9 +101,17 @@
 		#color-picker {
 			margin-left: 8px;
 		}
+		#admin-panel-features {
+			margin-top: 12px;
+			padding: 8px;
+			background: #fff3e0;
+			border-radius: 8px;
+			box-shadow: 0 2px 8px #0001;
+		}
 	</style>
 </head>
 <body>
+	<div id="catch-animation"></div>
 	<div class="container">
 		<!-- Login Form -->
 		<div id="login-section">
@@ -79,6 +150,12 @@
 				<input type="color" id="color-picker" title="Change panel color">
 			</div>
 			<div id="user-list"></div>
+			<div id="admin-panel-features">
+				<h4>Features</h4>
+				<button onclick="clearAllInventories()">Clear All Inventories</button>
+				<button onclick="logout()">Logout</button>
+				<button onclick="closeAdminPanel()">Close Panel</button>
+			</div>
 		</div>
 	</div>
 	<script src="game.js"></script>
