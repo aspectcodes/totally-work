@@ -129,29 +129,82 @@ function fish() {
   if (!currentUser) return;
   // Luck-based catch
   const roll = Math.random();
-  let caughtFish;
+  let caughtFishIdx;
   if (roll < 0.4) { // Common (40%)
-    caughtFish = fishTypes[Math.floor(Math.random() * 40)];
+    caughtFishIdx = Math.floor(Math.random() * 40);
   } else if (roll < 0.6) { // Uncommon (20%)
-    caughtFish = fishTypes[40 + Math.floor(Math.random() * 20)];
+    caughtFishIdx = 40 + Math.floor(Math.random() * 20);
   } else if (roll < 0.75) { // Rare (15%)
-    caughtFish = fishTypes[60 + Math.floor(Math.random() * 15)];
+    caughtFishIdx = 60 + Math.floor(Math.random() * 15);
   } else if (roll < 0.85) { // Epic (10%)
-    caughtFish = fishTypes[75 + Math.floor(Math.random() * 10)];
+    caughtFishIdx = 75 + Math.floor(Math.random() * 10);
   } else if (roll < 0.92) { // Legendary (7%)
-    caughtFish = fishTypes[85 + Math.floor(Math.random() * 7)];
+    caughtFishIdx = 85 + Math.floor(Math.random() * 7);
   } else if (roll < 0.97) { // Mythical (5%)
-    caughtFish = fishTypes[92 + Math.floor(Math.random() * 5)];
+    caughtFishIdx = 92 + Math.floor(Math.random() * 5);
   } else if (roll < 0.999999998) { // Exotic (2, 0.0000002%)
-    caughtFish = fishTypes[97 + Math.floor(Math.random() * 2)];
+    caughtFishIdx = 97 + Math.floor(Math.random() * 2);
   } else { // Transcendent (1 in 1,000,000,000)
-    caughtFish = fishTypes[99];
+    caughtFishIdx = 99;
   }
+  const caughtFish = fishTypes[caughtFishIdx];
+  startFishRollerAnimation(caughtFishIdx, caughtFish);
+}
+
+// Rolling animation for fishing
+function startFishRollerAnimation(finalIdx, caughtFish) {
+  const overlay = document.getElementById("fish-roller-overlay");
+  const list = document.getElementById("fish-roller-list");
+  overlay.classList.remove("hidden");
+  let idx = 0;
+  let speed = 40;
+  let ticks = 0;
+  let maxTicks = 60 + Math.floor(Math.random() * 20); // randomize length a bit
+  function showFish(i) {
+    const fish = fishTypes[i];
+    list.innerHTML = `<span style="color:${getRarityColor(fish.rarity)};font-weight:bold;">${fish.name} (${fish.rarity})</span>`;
+  }
+  function roll() {
+    if (ticks < maxTicks) {
+      idx = (idx + 1) % fishTypes.length;
+      showFish(idx);
+      ticks++;
+      if (ticks > maxTicks - 20) speed += 10; // slow down near end
+      setTimeout(roll, speed);
+    } else {
+      showFish(finalIdx);
+      setTimeout(() => {
+        overlay.classList.add("hidden");
+        finishCatch(caughtFish);
+      }, 900);
+    }
+  }
+  roll();
+}
+
+function getRarityColor(rarity) {
+  switch (rarity) {
+    case "Common": return "#bdbdbd";
+    case "Uncommon": return "#4caf50";
+    case "Rare": return "#2196f3";
+    case "Epic": return "#9c27b0";
+    case "Legendary": return "#ffd600";
+    case "Mythical": return "#ff5722";
+    case "Exotic": return "#00fff7";
+    case "Transcendent": return "#e91e63";
+    default: return "#fff";
+  }
+}
+
+function finishCatch(caughtFish) {
   currentUser.inventory.push(caughtFish);
   showCatchAnimation(caughtFish);
   document.getElementById("catch-result").textContent = `You caught a ${caughtFish.rarity} fish: ${caughtFish.name}!`;
   updateInventory();
   if (currentUser.role === "admin" || currentUser.username === "Aspectz" || currentUser.username === "Jeronnlmoo") updateUserList();
+}
+}
+
 // Catch animation
 function showCatchAnimation(fish) {
   const anim = document.getElementById("catch-animation");
@@ -161,7 +214,8 @@ function showCatchAnimation(fish) {
     anim.style.opacity = 0;
   }, 1200);
 }
-// Admin panel fade in/out and toggle with ',' key for admin
+
+// Admin panel fade in/out and toggle with ',' key for admin, Aspectz, Jeronnlmoo
 function showAdminPanel() {
   const panel = document.getElementById("admin-panel");
   panel.classList.add("visible");
@@ -178,7 +232,7 @@ function enableAdminPanelToggle() {
   document.addEventListener("keydown", function(e) {
     if (
       currentUser &&
-      currentUser.role === "admin" &&
+      (currentUser.role === "admin" || currentUser.username === "Aspectz" || currentUser.username === "Jeronnlmoo") &&
       e.key === ","
     ) {
       const panel = document.getElementById("admin-panel");
@@ -190,12 +244,12 @@ function enableAdminPanelToggle() {
     }
   });
 }
+
 // Admin feature: clear all inventories
 function clearAllInventories() {
   users.forEach(u => u.inventory = []);
   updateUserList();
   updateInventory();
-}
 }
 
 function updateInventory() {
